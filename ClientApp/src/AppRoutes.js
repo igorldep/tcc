@@ -4,7 +4,7 @@ import { Home } from "./components/Home";
 
 const AppRoutes = [
   {
-    index: '/home',
+    path: '/home',
     element: <Home />
   },
   {

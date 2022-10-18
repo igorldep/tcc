@@ -1,12 +1,11 @@
+using System.Numerics;
+
 namespace tcc;
 
 public class WeatherForecast
 {
-    public DateTime Date { get; set; }
+    public string? tempo { get; set; }
 
-    public int TemperatureC { get; set; }
+    public BigInteger fib { get; set; }
 
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-
-    public string? Summary { get; set; }
 }
