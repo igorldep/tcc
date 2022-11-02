@@ -29,7 +29,7 @@ phases:
             - echo Publish started on `date`
             - ls
             - ls -la
-            - dotnet publish -c Release  -r ubuntu-x64 -o ./build_output ./${PROJECT}.Api.csproj --self-contained false
+            - dotnet publish -c Release  -r ubuntu-x64 -o ./build_output ./${PROJECT}.csproj --self-contained false
 
 artifacts:
     files:
