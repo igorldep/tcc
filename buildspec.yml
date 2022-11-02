@@ -10,7 +10,7 @@ phases:
     install:
         commands:
             - echo Install started on `date`
-            - apt-get update
+            - apt-get update -y
             - apt-get install -y dotnet6
             
     pre_build:
