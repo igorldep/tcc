@@ -12,8 +12,6 @@ phases:
             - echo Install started on `date`
             - apt-get update -y
             - apt-get install -y dotnet6
-            - sudo apt-get install curl
-            - curl -sL https://deb.nodesource.com/setup_current.x | sudo -E bash –
             - sudo apt-get install -y nodejs
             - node -v
             
