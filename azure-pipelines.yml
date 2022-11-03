@@ -7,10 +7,7 @@ trigger:
 - master
 
 variables:
-- task: NodeTool@0
-  inputs:
-    versionSource: 'spec'
-    versionSpec: '6.x'
+
   # Azure Resource Manager connection created during pipeline creation
   azureSubscription: '4859a3c7-efb7-4d7e-a059-7cdf65bdd6b6'
 
@@ -31,6 +28,7 @@ stages:
     displayName: Build
     pool:
       vmImage: $(vmImageName)
+
     steps:
     - task: ArchiveFiles@2
       displayName: 'Archive files'
@@ -41,8 +39,11 @@ stages:
         archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
         replaceExistingArchive: true
     - task: DotNetCoreCLI@2
+      displayName: 'DotNet'
       inputs:
         command: 'build'
+        projects: '**/*.csproj'
+
     - upload: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
       artifact: drop
 
