@@ -1,4 +1,7 @@
 # Node.js React Web App to Linux on Azure
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
 # Build a Node.js React app and deploy it to Azure as a Linux web app.
 # Add steps that analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
@@ -7,7 +10,10 @@ trigger:
 - master
 
 variables:
-
+- task: NodeTool@0
+  inputs:
+    versionSource: 'spec'
+    versionSpec: '6.x'
   # Azure Resource Manager connection created during pipeline creation
   azureSubscription: '4859a3c7-efb7-4d7e-a059-7cdf65bdd6b6'
 
