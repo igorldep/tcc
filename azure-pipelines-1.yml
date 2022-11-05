@@ -115,6 +115,7 @@ stages:
           - task: AzureRmWebAppDeployment@4
             displayName: 'Azure App Service Deploy: igortcc'
             inputs:
+              azureSubscription: 357205d7-4c6d-4aae-8cc6-80df62be6d4c
               appType: webAppLinux
               WebAppName: $(webAppName)
               packageForLinux: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
