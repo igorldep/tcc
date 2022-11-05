@@ -20,6 +20,13 @@ variables:
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
 
+  uiSource: 'src'
+
+  uiBuild: '$(uiSource)/build'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
 stages:
 - stage: Build
   displayName: Build stage
@@ -43,6 +50,20 @@ stages:
       inputs:
         command: 'build'
         projects: '**/*.csproj'
+        
+    - task: NodeTool@0
+      inputs:
+        versionSource: 'spec'
+        versionSpec: '10.x'
+        checkLatest: true
+        displayName: 'Install Node.js'
+
+    - script: |
+      pushd $(uiSource)
+      npm install
+      npm run build
+      popd
+    displayName: 'npm install and build'
 
     - upload: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
       artifact: drop
