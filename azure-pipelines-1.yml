@@ -21,6 +21,9 @@ steps:
     command: 'build'
 
 - script: |
+    npm cache clean -f
+    rm -rf node_modules
+    npm i
     npm install
     npm build run
   displayName: 'npm install and build'
