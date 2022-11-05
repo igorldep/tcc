@@ -25,7 +25,10 @@ pr:
 - none
 
 variables:
-# Web app name
+  # Azure Resource Manager connection created during pipeline creation
+  azureSubscription: '357205d7-4c6d-4aae-8cc6-80df62be6d4c'
+
+  # Web app name
   webAppName: 'igortcc'
 
   # Environment name
@@ -115,7 +118,7 @@ stages:
           - task: AzureRmWebAppDeployment@4
             displayName: 'Azure App Service Deploy: igortcc'
             inputs:
-              azureSubscription: '357205d7-4c6d-4aae-8cc6-80df62be6d4c'
+              azureSubscription: $(azureSubscription)
               appType: webAppLinux
               WebAppName: $(webAppName)
               packageForLinux: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
