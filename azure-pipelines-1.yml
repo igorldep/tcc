@@ -39,7 +39,7 @@ stages:
         replaceExistingArchive: true
     - task: NodeTool@0
       inputs:
-        versionSpec: '10.x'
+        versionSpec: '6.x'
       displayName: 'Install Node.js'
 
     - task: DotNetCoreCLI@2
@@ -53,12 +53,7 @@ stages:
         arguments: 
 
 
-    - script: |
-        npm cache clean --force
-        rm -rf node_modules
-        npm i
-        npm install
-        npm build run
+    - script: 
       displayName: 'npm install and build'
 
     - upload: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
