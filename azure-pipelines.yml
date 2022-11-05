@@ -17,13 +17,6 @@ variables:
   # Environment name
   environmentName: 'igortcc'
 
-  # Agent VM image name
-  vmImageName: 'ubuntu-latest'
-
-  uiSource: 'src'
-
-  uiBuild: '$(uiSource)/build'
-
 pool:
   vmImage: 'ubuntu-latest'
 
@@ -54,7 +47,7 @@ stages:
     - task: NodeTool@0
       inputs:
         versionSource: 'spec'
-        versionSpec: '10.x'
+        versionSpec: '6.x'
         checkLatest: true
         displayName: 'Install Node.js'
 
