@@ -116,15 +116,9 @@ stages:
         deploy:
           steps:
           - task: AzureRmWebAppDeployment@4
-            displayName: 'Azure App Service Deploy: igortcc'
             inputs:
-              azureSubscription: $(azureSubscription)
-              appType: webAppLinux
-              WebAppName: $(webAppName)
-              packageForLinux: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
-              RuntimeStack: 'NODE|10.10'
-              StartupCommand: 'npm run start'
-              ScriptType: 'Inline Script'
-              InlineScript: |
-                npm install
-                npm run build --if-present
+              ConnectionType: 'AzureRM'
+              azureSubscription: 'Azure subscription 1 (357205d7-4c6d-4aae-8cc6-80df62be6d4c)'
+              appType: 'webAppLinux'
+              WebAppName: 'igortcc'
+              packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
