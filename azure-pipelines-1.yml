@@ -24,6 +24,16 @@ trigger:
 pr: 
 - none
 
+variables:
+# Web app name
+  webAppName: 'igortcc'
+
+  # Environment name
+  environmentName: 'igortcc'
+
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+
 # Define the 'stages' of this pipeline. A stage is a high level 'operation' that form the biggest building blocks
 # of a pipeline, and are usually conducted sequentially.
 stages:
@@ -103,7 +113,6 @@ stages:
 # endpoint
 - stage: Deploy
   displayName: Deploy stage
-  dependsOn: Build
   condition: succeeded()
   jobs:
   - deployment: Deploy
