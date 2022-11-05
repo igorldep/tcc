@@ -21,7 +21,7 @@ steps:
     command: 'build'
 
 - script: |
-    npm cache clean -f
+    npm cache clean --force
     rm -rf node_modules
     npm i
     npm install
