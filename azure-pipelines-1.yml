@@ -70,21 +70,9 @@ stages:
     displayName: Download React build Artifact and copy to Azure Storage
     continueOnError: false
     pool:
-      vmImage: 'windows-2019'   # We must use Windows agents for this job, because the Azure File Copy task only supports windows atm :(
+      vmImage: $(vmImageName)   # We must use Windows agents for this job, because the Azure File Copy task only supports windows atm :(
     workspace:
       clean: outputs
-    steps:
-    # download the previously publish build artifacts, since they are what we need to upload to Storage!
-    - download: current   # Specifies that the artifact we want to download was published from the current pipeline run.
-      artifact: reactAppBuild
-    # Use 'Azure File Copy' task to copy into the $web blob in the Storage account, which is acting as our static server
-    - task: AzureFileCopy@3
-      inputs:
-        SourcePath: '$(Pipeline.Workspace)/reactAppBuild'
-        azureSubscription: 'Free Trial(38d34816-abf3-47c2-9437-b6f04bc61324)'
-        Destination: 'AzureBlob'
-        storage: 'tytodosreactapp'
-        ContainerName: '$web'
     
 # This stage will run a 'dotnet build' command, to ensure the project can build successfully. If it passes, we will
 # deploy to kudu using the kudu rest API, in a later stage.
@@ -96,7 +84,7 @@ stages:
     displayName: dotnet build job
     continueOnError: false  # fail the pipeline if this step fails
     pool:
-      vmImage: 'ubuntu-latest'
+      vmImage: $(vmImageName)
     workspace:
       clean: outputs
     steps:
