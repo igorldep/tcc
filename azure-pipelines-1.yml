@@ -92,7 +92,7 @@ stages:
     - task: DotNetCoreCLI@2
       inputs:
         command: 'build'
-        projects: AspNetCoreApiBackend/AspNetCoreApiBackend.csproj
+        projects: '**/*.csproj'
 
 # This stages uses kudu rest API commands to explicitly deploy the api app to Azure app-service. This only runs
 # if the .net-core build stage passed, to make sure we don't deploy broken code. 
