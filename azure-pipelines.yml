@@ -58,7 +58,7 @@ stages:
         checkLatest: true
         displayName: 'Install Node.js'
 
-    - script: |
+    - script:
       pushd $(uiSource)
       npm install
       npm run build
