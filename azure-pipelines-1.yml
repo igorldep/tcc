@@ -101,36 +101,30 @@ stages:
 # once the initial publish completes, we remotely run 'dotnet ef database update' to ensure EF-Migrations are applied
 # to our Azure SQL Database. This command can be executed on the target machine using the /api/command Kudu REST Api
 # endpoint
-- stage: publishDotNetCoreToKudu
-  displayName: Publishes API to Kudu on App Services
-  dependsOn: [buildDotNetCoreApp]
+- stage: Deploy
+  displayName: Deploy stage
+  dependsOn: Build
+  condition: succeeded()
   jobs:
-  - job: deployViaRest
-    displayName: Deploy .NET Core app using /deploy kudu endpoint
-    continueOnError: false  # fail the pipeline if this step fails
-    variables:
-    - group: kudu-deployment-account-credentials  # Use the credentials defined in this variable group, linked from Azure vault
+  - deployment: Deploy
+    displayName: Deploy
+    environment: $(environmentName)
     pool:
-      vmImage: 'ubuntu-latest'
-    workspace:
-      clean: outputs
-    steps:
-    # Sends a /deploy request using the Deployment account credentials
-    - bash: curl -H "Content-Type:application/json" --user ${DEPLOYUSER}:${DEPLOYPASS} -X POST ${ENDPOINT}/deploy -d '{"format":"basic","url":"https://github.com/AlexJohnKennedy/TrackYourTodos.git"}'
-      env:
-        DEPLOYUSER: $(track-your-todos-api-deployment-account-username)
-        DEPLOYPASS: $(track-your-todos-api-deployment-account-password)
-        ENDPOINT: $(track-your-todos-api-kudu-deployment-endpoint)
-    # Adds a new database Migration for this deployment, using the commit id as the 'name'. The subsequent 'database update' call performs this migration.
-    - bash: curl -H "Content-Type:application/json" --user ${DEPLOYUSER}:${DEPLOYPASS} -X POST ${ENDPOINT}/api/command -d "{\"command\":\"dotnet ef migrations add ${COMMITID}\",\"dir\":\"site\\\\repository/AspNetCoreApiBackend\"}"
-      env:
-        COMMITID: $(Build.SourceVersion)  #Commit hash of the commit being deployed. This is apparently a pre-defined variable in Azure Pipelines.
-        DEPLOYUSER: $(track-your-todos-api-deployment-account-username)
-        DEPLOYPASS: $(track-your-todos-api-deployment-account-password)
-        ENDPOINT: $(track-your-todos-api-kudu-deployment-endpoint)
-    # Sends a command to kudu, which in turn executes another bash command on the virtual machine kudu deployed to, which invokes ef database update
-    - bash: curl -H "Content-Type:application/json" --user ${DEPLOYUSER}:${DEPLOYPASS} -X POST ${ENDPOINT}/api/command -d '{"command":"dotnet ef database update","dir":"site\\repository/AspNetCoreApiBackend"}'
-      env:
-        DEPLOYUSER: $(track-your-todos-api-deployment-account-username)
-        DEPLOYPASS: $(track-your-todos-api-deployment-account-password)
-        ENDPOINT: $(track-your-todos-api-kudu-deployment-endpoint)
+      vmImage: $(vmImageName)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureRmWebAppDeployment@4
+            displayName: 'Azure App Service Deploy: igortcc'
+            inputs:
+              azureSubscription: $(azureSubscription)
+              appType: webAppLinux
+              WebAppName: $(webAppName)
+              packageForLinux: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
+              RuntimeStack: 'NODE|10.10'
+              StartupCommand: 'npm run start'
+              ScriptType: 'Inline Script'
+              InlineScript: |
+                npm install
+                npm run build --if-present
