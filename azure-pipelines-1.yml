@@ -65,17 +65,6 @@ stages:
       # provide a name for this artifact
       artifact: reactAppBuild
 
-- stage: deployReactApp
-  displayName: Deploy reactApp build artifacts to Azure Storage
-  dependsOn: [buildReactApp]
-  jobs:
-  - job: deployReactApp
-    displayName: Download React build Artifact and copy to Azure Storage
-    continueOnError: false
-    pool:
-      vmImage: $(vmImageName)   # We must use Windows agents for this job, because the Azure File Copy task only supports windows atm :(
-    workspace:
-      clean: outputs
     
 # This stage will run a 'dotnet build' command, to ensure the project can build successfully. If it passes, we will
 # deploy to kudu using the kudu rest API, in a later stage.
@@ -96,6 +85,8 @@ stages:
       inputs:
         command: 'build'
         projects: '**/*.csproj'
+        
+    - task: PublishBuildArtifacts@1
 
 # This stages uses kudu rest API commands to explicitly deploy the api app to Azure app-service. This only runs
 # if the .net-core build stage passed, to make sure we don't deploy broken code. 
