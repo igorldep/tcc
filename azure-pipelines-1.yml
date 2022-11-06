@@ -94,11 +94,6 @@ stages:
         workingDirectory: '$(System.DefaultWorkingDirectory)'
         
 
-# This stages uses kudu rest API commands to explicitly deploy the api app to Azure app-service. This only runs
-# if the .net-core build stage passed, to make sure we don't deploy broken code. 
-# once the initial publish completes, we remotely run 'dotnet ef database update' to ensure EF-Migrations are applied
-# to our Azure SQL Database. This command can be executed on the target machine using the /api/command Kudu REST Api
-# endpoint
 - stage: Deploy
   displayName: Deploy stage
   dependsOn: [buildDotNetCoreApp, buildReactApp]
@@ -119,4 +114,5 @@ stages:
               azureSubscription: 'Azure subscription 1 (357205d7-4c6d-4aae-8cc6-80df62be6d4c)'
               appType: 'webAppLinux'
               WebAppName: 'igortcc'
-              packageForLinux: '/home/vsts/work/1/s/bin/Debug/net6.0/publish/*.zip'
+              packageForLinux: '/home/vsts/work/1/s/bin/Debug/net6.0/publish/'
+            
