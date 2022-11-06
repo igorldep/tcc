@@ -113,4 +113,4 @@ stages:
               azureSubscription: 'Azure subscription 1 (357205d7-4c6d-4aae-8cc6-80df62be6d4c)'
               appType: 'webAppLinux'
               WebAppName: 'igortcc'
-              packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
+              packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.dll'
