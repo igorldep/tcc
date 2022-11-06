@@ -95,8 +95,7 @@ stages:
 # endpoint
 - stage: Deploy
   displayName: Deploy stage
-  dependsOn: buildDotNetCoreApp
-  dependsOn: buildReactApp
+  dependsOn: [buildDotNetCoreApp, buildReactApp]
   condition: succeeded()
   jobs:
   - deployment: Deploy
