@@ -67,7 +67,7 @@ stages:
       
     - task: PublishBuildArtifacts@1
       inputs:
-        PathtoPublish: '/home/vsts/work/1/s/drop'
+        PathtoPublish: '$(System.DefaultWorkingDirectory)/*.zip'
         ArtifactName: 'drop'
         publishLocation: 'Container'
 
@@ -94,7 +94,7 @@ stages:
         
     - task: PublishBuildArtifacts@1
       inputs:
-        PathtoPublish: '/home/vsts/work/1/s/drop'
+        PathtoPublish: '$(System.DefaultWorkingDirectory)/*.zip'
         ArtifactName: 'drop'
         publishLocation: 'Container'
 
@@ -123,4 +123,4 @@ stages:
               azureSubscription: 'Azure subscription 1 (357205d7-4c6d-4aae-8cc6-80df62be6d4c)'
               appType: 'webAppLinux'
               WebAppName: 'igortcc'
-              packageForLinux: '/home/vsts/work/1/s/drop/*.zip'
+              packageForLinux: '$(System.DefaultWorkingDirectory)/*.zip'
