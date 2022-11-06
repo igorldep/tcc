@@ -61,15 +61,10 @@ stages:
     # In order for our subsequent deployment stage to access this, we must use the 'publish' step. This publishes a "pipeline artifact"
     # So that it can be accessed later. We will use this to later access the build directory and publish it to the
     # appropriate $web blob container acting as our static web-server for the React Application.
-    - publish: ClientApp/build
+    - publish: '$(System.DefaultWorkingDirectory)'
       # provide a name for this artifact
       artifact: reactAppBuild
       
-    - task: PublishBuildArtifacts@1
-      inputs:
-        PathtoPublish: '$(System.DefaultWorkingDirectory)'
-        ArtifactName: 'drop'
-        publishLocation: 'Container'
 
     
 # This stage will run a 'dotnet build' command, to ensure the project can build successfully. If it passes, we will
@@ -92,11 +87,12 @@ stages:
         command: 'build'
         projects: '**/*.csproj'
         
-    - task: PublishBuildArtifacts@1
+    - task: DotNetCoreCLI@2
       inputs:
-        PathtoPublish: '$(System.DefaultWorkingDirectory)'
-        ArtifactName: 'drop'
-        publishLocation: 'Container'
+        command: 'publish'
+        publishWebProjects: true
+        workingDirectory: '$(System.DefaultWorkingDirectory)'
+        
 
 # This stages uses kudu rest API commands to explicitly deploy the api app to Azure app-service. This only runs
 # if the .net-core build stage passed, to make sure we don't deploy broken code. 
@@ -123,4 +119,4 @@ stages:
               azureSubscription: 'Azure subscription 1 (357205d7-4c6d-4aae-8cc6-80df62be6d4c)'
               appType: 'webAppLinux'
               WebAppName: 'igortcc'
-              packageForLinux: '$(System.DefaultWorkingDirectory)/*.zip'
+              packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
