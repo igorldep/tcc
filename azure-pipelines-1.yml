@@ -98,21 +98,70 @@ stages:
   displayName: Deploy stage
   dependsOn: [buildDotNetCoreApp, buildReactApp]
   condition: succeeded()
-  jobs:
-  - deployment: Deploy
+  #jobs:
+  #- deployment: Deploy
+  #  displayName: Deploy
+  #  environment: $(environmentName)
+  #  pool:
+  #    vmImage: $(vmImageName)
+  #  strategy:
+  #    runOnce:
+  #      deploy:
+  #       steps:
+  #        - task: AzureRmWebAppDeployment@4
+  #          inputs:
+  #            ConnectionType: 'AzureRM'
+  #            azureSubscription: 'Azure subscription 1 (357205d7-4c6d-4aae-8cc6-80df62be6d4c)'
+  #            appType: 'webAppLinux'
+  #            WebAppName: 'igortcc'
+  #            packageForLinux: '/home/vsts/work/1/'
+  #            AdditionalArguments: 
+
+  jobs: 
+  - deployment: VMDeploy
     displayName: Deploy
-    environment: $(environmentName)
-    pool:
-      vmImage: $(vmImageName)
+    environment:
+      name: tcc
+      resourceType: VirtualMachine
     strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: AzureRmWebAppDeployment@4
-            inputs:
-              ConnectionType: 'AzureRM'
-              azureSubscription: 'Azure subscription 1 (357205d7-4c6d-4aae-8cc6-80df62be6d4c)'
-              appType: 'webAppLinux'
-              WebAppName: 'igortcc'
-              packageForLinux: '/home/vsts/work/1/'
-            
+        rolling:
+          maxParallel: 5  #for percentages, mention as x%
+          preDeploy:
+            steps:
+            - download: current
+              artifact: drop
+            - script: echo initialize, cleanup, backup, install certs
+          deploy:
+            steps:
+            - task: Bash@3
+              inputs:
+                targetType: 'inline'
+                script: |
+                  # Modify deployment script based on the app type
+                  echo "Starting deployment script npm"
+                  npm install
+                  npm run build --if-present 
+
+            - task: Bash@3
+              inputs:
+                targetType: 'inline'
+                script: |
+                  # Modify deployment script based on the app type
+                  echo "Starting deployment script dotnet"
+                  dotnet run
+                  
+          routeTraffic:
+            steps:
+            - script: echo routing traffic
+          postRouteTraffic:
+            steps:
+            - script: echo health check post-route traffic
+          on:
+            failure:
+              steps:
+              - script: echo Restore from backup! This is on failure
+            success:
+              steps:
+              - script: echo Notify! This is on success
+              
+              
